@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Counter Terrorits</title>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>   
+    <script src="https://cdn.jsdelivr.net/gh/n5ro/aframe-physics-system@v4.0.1/dist/aframe-physics-system.min.js"></script>
+    <script src="https://recast-api.donmccurdy.com/aframe-inspector-plugin-recast.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.1.0/dist/aframe-environment-component.min.js"></script>
+
+    <script src="./js/shoot.js"></script>
+    <script src="./js/game.js"></script>
+    <script src="./js/movementSound.js"></script>
+
+  </head>
+  <body>
+    <a-scene id="scene" physics="debug:false" inspector-plugin-recast>
+      <a-sky color="#33B8E5"></a-sky>
+      <!--Light-->
+      <a-entity light="type: ambient; color: white; intensity:0.5"></a-entity>
+
+      <!--Assets-->
+      <a-assets>
+          
+          <a-asset-item id="bomb" src="./models/bomb/scene.gltf"></a-asset-item>
+
+          <a-asset-item id="enemy" src="./models/soldier/scene.gltf"></a-asset-item>
+
+          <a-asset-item id="collider" src="./models/nav_mesh/navmesh.gltf"></a-asset-item>
+
+          <a-asset-item id="gun" src="./models/shooter/gun.gltf"></a-asset-item>
+
+          <audio id="footstepSound" src="./sounds/footStep.mp3"></audio>
+
+          <audio id="shootSound" src="./sounds/shoot.mp3"></audio>
+
+          <audio id="bombSound" src="./sounds/bombsound.mp3"></audio>
+
+          <audio id="defuseSound" src="./sounds/bombdefuse.mp3"></audio>
+
+          <audio id="damageSound" src="./sounds/damage1.wav"></audio>
+
+      </a-assets>
+
+      <!--Sounds-->
+      <a-entity id="footStep" sound="src: #footstepSound; poolSize:5; autoplay: false; volume: 2;loop:false"></a-entity>
+      <a-entity id="shoot" sound="src: #shootSound; poolSize:10; autoplay: false; volume: 2;loop:false"></a-entity>
+      <a-entity id="bombInitiated" sound="src: #bombSound; poolSize:1; autoplay: false; volume: 2;loop:false"></a-entity>
+      <a-entity id="bombDefused" sound="src: #defuseSound; poolSize:2; autoplay: false; volume: 2;loop:false"></a-entity>
+      <a-entity id="damage" sound="src: #damageSound; poolSize:2; autoplay: false; volume: 1;loop:false"></a-entity>
+
+
+      <!--Camera-->
+      <a-entity id="camera-rig" movement-controls="speed: 1; constrainToNavMesh: true" position="0 0 15">
+        <a-entity id="camera" camera position="0 3 0" body="type: static; mass: 5; shape: none;" shape="shape: sphere; radius: 5; offset: 0 3 0;" look-controls="pointerLockEnabled: true">
+
+          
+        <a-entity
+          game-play
+          id="timer"
+          position="0 0.8 -1"
+          visible="true"
+          text="font: exo2bold; align: center; width: 2; color: white; value: 00:00"
+        ></a-entity>
+
+        <a-entity id="countLife" position="0 -0.7 -1" text="font: exo2bold; align: center; width: 2; color: white; value: 100"></a-entity>
+
+        
+        <a-entity
+          id="game_over_text"
+          position="0 0 -1"
+          text="font: exo2bold; align: center; width: 3; black: white;value: Game Over!!!"
+          visible="false"
+        ></a-entity>
+
+        <a-entity
+          id="game_victory_text"
+          position="0 0 -1"
+          text="font: exo2bold; align: center; width: 3; black: white;value: Great You Win!!!"
+          visible="false"
+        ></a-entity>
+
+        <a-entity
+          id="fadeBackground"
+          geometry="primitive: box; width: 2; height:1"
+          position="0 0 -1"
+          material="color: black; side: back; shader: flat; transparent: false; opacity: 0.7"
+          visible="false"
+        ></a-entity>
+
+        <a-entity 
+          id="weapon" 
+          gltf-model="#gun" 
+          position="0.5 -1 -1" 
+          rotation="0 190 0" 
+          scale="0.2 0.2 0.2"
+          visible="true"
+          movement-sound
+        ></a-entity>
+
+        
+
+        <a-cursor></a-cursor>
+        </a-entity>
+    </a-entity>
+
+
+      <!--Bullet-->
+      <a-entity bullets></a-entity>
+      <a-entity game-play></a-entity>
+
+      <!-- Navigation Mesh -->
+      <a-entity id="navigation-mesh" position="0 -1 0" gltf-model="#collider" visible="false" nav-mesh></a-entity>
+
+      <!--Ground-->
+      <a-plane
+        id="ground"
+        position="-20 0.578 0"
+        rotation="-90 0 0"
+        repeat="10 10"
+        height="100"
+        width="100"
+        src="./textures/ground.jpg"
+        static-body
+        visible="true"
+      >
+      </a-plane>
+
+      <!--Map-->
+      <a-box id="vertWall1" position="-3 2.5 10" rotation="0 90 0" color="grey" depth="0.1" height="4" width="15"  static-body src="./textures/wall.jpg" repeat="5 5"></a-box>
+
+      <a-box id="vertWall2" position="3 2.5 7.5" rotation="0 90 0" color="grey" depth="0.1" height="4" width="20"  static-body src="./textures/wall.jpg" repeat="5 5"></a-box>
+
+      <a-box id="horiWall1" position="0 2.5 17.5" rotation="0 0 0" color="grey" depth="0.1" height="4" width="6"  static-body src="./textures/wall.jpg" repeat="5 5"></a-box>
+
+      <a-box id="horiWall2" position="-2 2.5 -2.5" rotation="0 0 0" color="grey" depth="0.1" height="4" width="10"  static-body src="./textures/wall.jpg" repeat="5 5"></a-box>
+
+      <a-box id="horiWall3" position="-5 2.5 2.5" rotation="0 0 0" color="grey" depth="0.1" height="4" width="4"  static-body src="./textures/wall.jpg" repeat="5 5"></a-box>
+
+      <a-box id="vertWall3" position="-7 2.5 10" rotation="0 90 0" color="grey" depth="0.1" height="4" width="15"  static-body src="./textures/wall.jpg" repeat="5 5"></a-box>
+
+      <a-box id="vertWall4" position="-7 2.5 -10" rotation="0 90 0" color="grey" depth="0.1" height="4" width="15"  static-body src="./textures/wall.jpg" repeat="5 5"></a-box>
+
+      <a-box id="horiWall4" position="-20.7 3.5 17.5" rotation="0 0 0" color="grey" depth="0.1" height="6" width="27.5"  static-body src="./textures/wall.jpg" repeat="5 5"></a-box>
+
+      <a-box id="horiWall5" position="-20.7 3.5 -17.5" rotation="0 0 0" color="grey" depth="0.1" height="6" width="27.5"  static-body src="./textures/wall.jpg" repeat="5 5"></a-box>
+
+      <a-box id="vertWall5" position="-34.5 5 0" rotation="0 90 0" color="grey" depth="0.1" height="10" width="35"  static-body src="./textures/wall.jpg" repeat="5 5"></a-box>
+
+
+      <!--Instuctions-->
+
+      <a-entity id="instruction1" rotation="-90 0 0" position="0 0.674 12"   text="width: 10; height: auto; align: center; value: Use AWSD to move \n Press z to shoot"></a-entity>
+
+      <a-entity id="instruction2" position="0 3 -2.420"   text="width: 10; height: auto; align: center; value:Defuse the bomb before \n time runs out"></a-entity>
+
+      <a-entity id="instruction3" rotation="-90 200 0" position="-28.500 3.557 1.5"   text="width: 10; height: auto; align: center; value: Hold E to diffuse"></a-entity>
+
+      <!--Obstacles-->
+      <a-box id="box1" position="-15 2 1" color="grey" scale="2.5 2.5 2.5" src="./textures/box.jpg" static-body></a-box>
+
+      <a-box id="box2" position="-15 2 -1.660" color="grey" scale="2.5 2.5 2.5" src="./textures/box.jpg" static-body></a-box>
+
+      <a-box id="box3" position="-15 4.5 0" color="grey" rotation="0 45 0" scale="2.5 2.5 2.5" src="./textures/box.jpg" static-body></a-box>
+
+      <a-box id="coloumn1" position="-22.1 4.5 -11.8" color="grey" scale="1.5 7 1.5" src="./textures/coloumn.jpg" static-body></a-box>
+
+      <a-box id="coloumn2" position="-22.1 4.5 16.59" color="grey" scale="1.5 7 1.5" src="./textures/coloumn.jpg" static-body></a-box>
+
+
+      <!--Plant Area-->
+      <a-box id="plantPlatform"  scale="12 0.1 35" color="grey" position="-28.5 3.5 0" rotation="0 0 0" src="https://thumbs.dreamstime.com/b/old-paper-texture-grunge-old-paper-treasure-map-vintage-closeup-age-marks-letter-high-age-74865408.jpg" repeat="5 5" static-body></a-box>
+
+      <a-plane id="plantStair" position="-18 2 -15" color="grey" rotation="-72 90 0" visible="true" height="10" width="5" src="https://image.shutterstock.com/z/avopix-536035675.jpg" static-body></a-plane>
+      
+      <a-plane id="plantMark" position="-29.6 3.557 0" src="./textures/site.png" width="5" height="5" rotation="-90 0 0" transparent="true" static-body></a-plane>
+      
+      <a-entity id="plantBomb" gltf-model="#bomb" scale="0.005 0.005 0.005" position="-29.6 3.5 0" rotation="0 180 0" visible="true" static-body></a-entity>
+
+
+      <!--Enemies-->
+      <a-entity class="enemy" id="enemy1" gltf-model="#enemy" scale="0.08 0.08 0.08" position="-8.5 0.5 16" rotation="0 180 0" visible="true" static-body></a-entity>
+
+      <a-entity class="enemy" id="enemy2" gltf-model="#enemy" scale="0.08 0.08 0.08" position="-18 0.5 0" rotation="0 -90 0" visible="true" static-body></a-entity>
+
+      <a-entity class="enemy" id="enemy3" gltf-model="#enemy" scale="0.08 0.08 0.08" position="-24 3.6 16.5" rotation="0 180 0" visible="true" static-body></a-entity>
+
+
+      
+    </a-scene>
+  </body>
+</html>

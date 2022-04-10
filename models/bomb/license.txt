@@ -1,0 +1,11 @@
+Model Information:
+* title:	CSGO bomb (XYZ Homework) detailing
+* source:	https://sketchfab.com/3d-models/csgo-bomb-xyz-homework-detailing-0c230c632e804e14a309b7e9d64878fa
+* author:	Nazar Romanenko (https://sketchfab.com/Nazar_Romanenko)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "CSGO bomb (XYZ Homework) detailing" (https://sketchfab.com/3d-models/csgo-bomb-xyz-homework-detailing-0c230c632e804e14a309b7e9d64878fa) by Nazar Romanenko (https://sketchfab.com/Nazar_Romanenko) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
